@@ -4,6 +4,13 @@ import { getPoemas, supabase } from '../lib/supabase';
 
 const poemas = await getPoemas();
 
+const themeColors: Record<string, string> = {
+  'romántico': 'bg-rose-500',
+  'cottage-core': 'bg-emerald-500',
+  'sereno': 'bg-sky-500',
+  'nostálgico': 'bg-amber-500',
+};
+
 // Obtener todos los likes
 const { data: likes } = await supabase
   .from('likes')
@@ -109,12 +116,6 @@ const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0
           <h2 class="text-2xl font-light text-neutral-800 mb-6">Por Tema Visual</h2>
           <div class="space-y-4">
             {Object.entries(themeCounts).map(([theme, count]) => {
-              const colors: Record<string, string> = {
-                'romántico': 'bg-rose-500',
-                'cottage-core': 'bg-emerald-500',
-                'sereno': 'bg-sky-500',
-                'nostálgico': 'bg-amber-500',
-              };
               return (
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
