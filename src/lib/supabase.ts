@@ -4,7 +4,10 @@ const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Faltan las variables de entorno de Supabase');
+  console.error('❌ Faltan variables de entorno de Supabase');
+  console.error('PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅ Configurada' : '❌ Falta');
+  console.error('PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Configurada' : '❌ Falta');
+  throw new Error('Faltan las variables de entorno de Supabase. Configúralas en Vercel.');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -30,13 +33,21 @@ export interface Like {
 
 // Funciones helper
 export async function getPoemas() {
-  const { data, error } = await supabase
-    .from('poemas')
-    .select('*')
-    .order('published_date', { ascending: false });
-  
-  if (error) throw error;
-  return data as Poema[];
+  try {
+    const { data, error } = await supabase
+      .from('poemas')
+      .select('*')
+      .order('published_date', { ascending: false });
+    
+    if (error) {
+      console.error('Error obteniendo poemas:', error);
+      throw error;
+    }
+    return data as Poema[];
+  } catch (error) {
+    console.error('Error en getPoemas:', error);
+    return [];
+  }
 }
 
 export async function getPoemaBySlug(slug: string) {
