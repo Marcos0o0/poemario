@@ -1,0 +1,160 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  content: string;
+  poemaId: string;
+  hasLike: boolean;
+  category: string;
+  publishedDate: string;
+}
+
+const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = Astro.props;
+---
+
+<div class="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 py-16 px-4">
+  <div class="max-w-3xl mx-auto">
+    <!-- Botón de regreso -->
+    <a 
+      href="/poemas" 
+      class="inline-flex items-center gap-2 text-amber-700 hover:text-amber-900 transition-colors mb-8 group"
+    >
+      <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+      <span class="font-sans text-sm">Índice</span>
+    </a>
+    
+    <!-- Contenedor del poema -->
+    <div class="bg-white/90 backdrop-blur-sm border-2 border-amber-200 rounded-2xl shadow-2xl p-8 md:p-12 relative overflow-hidden">
+      <!-- Textura vintage -->
+      <div class="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-900 via-transparent to-transparent"></div>
+      
+      <!-- Decoración superior -->
+      <div class="text-center mb-8 relative z-10">
+        <svg class="w-10 h-10 mx-auto text-amber-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="text-xs uppercase tracking-widest text-amber-700 font-sans">
+          {category}
+        </span>
+      </div>
+      
+      <!-- Título -->
+      <h1 class="text-4xl md:text-5xl font-light text-center text-neutral-800 mb-4 relative z-10">
+        {title}
+      </h1>
+      
+      {subtitle && (
+        <p class="text-center text-amber-700 italic mb-8 text-lg relative z-10">
+          {subtitle}
+        </p>
+      )}
+      
+      <div class="flex items-center justify-center gap-2 mb-12 relative z-10">
+        <div class="w-8 h-px bg-amber-300"></div>
+        <span class="text-amber-400 text-xl">✦</span>
+        <div class="w-8 h-px bg-amber-300"></div>
+      </div>
+      
+      <!-- Contenido del poema -->
+      <div class="prose prose-lg mx-auto text-neutral-700 leading-relaxed relative z-10">
+        {content.split('\n').map((line) => (
+          <p class={line.trim() === '' ? 'h-4' : 'text-center'}>
+            {line}
+          </p>
+        ))}
+      </div>
+      
+      <div class="flex items-center justify-center gap-2 mt-12 mb-8 relative z-10">
+        <div class="w-8 h-px bg-amber-300"></div>
+        <span class="text-amber-400 text-xl">✦</span>
+        <div class="w-8 h-px bg-amber-300"></div>
+      </div>
+      
+      <!-- Botón de like -->
+      <div class="text-center relative z-10">
+        <button 
+          id="like-button"
+          data-poema-id={poemaId}
+          data-has-like={hasLike}
+          class="group relative inline-flex items-center gap-3 px-6 py-3 bg-white border-2 border-amber-300 rounded-full hover:bg-amber-50 transition-all duration-300 hover:scale-105"
+        >
+          <svg 
+            id="heart-icon"
+            class={`w-6 h-6 transition-all duration-300 ${hasLike ? 'text-amber-600 fill-current scale-110' : 'text-amber-400'}`}
+            fill={hasLike ? 'currentColor' : 'none'}
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+          <span id="like-text" class="font-sans text-sm text-neutral-700">
+            {hasLike ? 'Te gustó este poema' : '¿Te gustó este poema?'}
+          </span>
+        </button>
+      </div>
+      
+      <!-- Fecha -->
+      <div class="mt-8 text-center relative z-10">
+        <time class="text-xs text-neutral-400 font-sans">
+          {new Date(publishedDate).toLocaleDateString('es-ES', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </time>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { supabase } from '../../lib/supabase';
+  
+  const button = document.getElementById('like-button');
+  const icon = document.getElementById('heart-icon');
+  const text = document.getElementById('like-text');
+  
+  if (button && icon && text) {
+    button.addEventListener('click', async () => {
+      const poemaId = button.dataset.poemaId;
+      const hasLike = button.dataset.hasLike === 'true';
+      
+      try {
+        if (hasLike) {
+          await supabase
+            .from('likes')
+            .delete()
+            .eq('poema_id', poemaId);
+          
+          button.dataset.hasLike = 'false';
+          icon.classList.remove('text-amber-600', 'fill-current', 'scale-110');
+          icon.classList.add('text-amber-400');
+          icon.setAttribute('fill', 'none');
+          text.textContent = '¿Te gustó este poema?';
+        } else {
+          await supabase
+            .from('likes')
+            .insert({ poema_id: poemaId });
+          
+          button.dataset.hasLike = 'true';
+          icon.classList.remove('text-amber-400');
+          icon.classList.add('text-amber-600', 'fill-current', 'scale-110');
+          icon.setAttribute('fill', 'currentColor');
+          text.textContent = 'Te gustó este poema';
+          
+          icon.classList.add('animate-ping');
+          setTimeout(() => icon.classList.remove('animate-ping'), 600);
+        }
+      } catch (error) {
+        console.error('Error al actualizar like:', error);
+      }
+    });
+  }
+</script>

@@ -1,16 +1,321 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Versos Para Ti">
+  <div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-neutral-50 via-rose-50/30 to-neutral-50 relative overflow-hidden page-wrapper" id="pageWrapper">
+    
+    <!-- Decorative background blobs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-20 left-10 w-32 h-32 bg-rose-300 rounded-full bg-blob"></div>
+      <div class="absolute bottom-20 right-10 w-40 h-40 bg-emerald-300 rounded-full bg-blob"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-200 rounded-full bg-blob"></div>
+    </div>
+
+    <div class="max-w-md w-full relative z-10">
+      <!-- Book Container -->
+      <div class="book-container cursor-pointer group" id="bookContainer">
+        
+        <!-- Shadow base -->
+        <div class="absolute inset-0 bg-neutral-800/20 blur-2xl translate-y-4 rounded-lg transition-all duration-700" id="bookShadow"></div>
+        
+        <!-- Book pages (background) -->
+        <div class="absolute inset-0 bg-gradient-to-r from-amber-50 via-stone-50 to-amber-50 rounded-lg border-2 border-orange-100 overflow-hidden pages-visible">
+          <div class="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-amber-900/10 to-transparent"></div>
+          <!-- Page lines -->
+          <div class="absolute right-4 top-8 bottom-8 w-0.5 flex flex-col gap-1">
+            {Array.from({ length: 30 }).map(() => (
+              <div class="flex-1 bg-neutral-300/30 rounded-full"></div>
+            ))}
+          </div>
+          <div class="w-full h-full flex items-center justify-center">
+            <div class="text-center space-y-4 opacity-60">
+              <svg class="w-10 h-10 text-orange-800/40 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <p class="text-base text-neutral-500 italic font-light">Índice de poemas...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Front cover (the one that flips) -->
+        <div class="book-cover relative w-full h-[480px] sm:h-[560px]" id="bookCover">
+          
+          <!-- Front side of cover -->
+          <div class="cover-front bg-gradient-to-br from-neutral-100 via-white to-stone-50 border-2 border-neutral-200 p-8 sm:p-12 flex flex-col items-center justify-between book-shadow">
+            
+            <!-- Book spine effect -->
+            <div class="book-spine"></div>
+
+            <!-- Top ornament -->
+            <div class="w-full flex flex-col items-center gap-2">
+              <div class="w-24 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
+              <svg class="w-6 h-6 text-rose-400 animate-float" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <div class="w-24 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
+            </div>
+
+            <!-- Title section -->
+            <div class="flex-1 flex flex-col items-center justify-center text-center space-y-6">
+              <p class="text-sm tracking-[0.3em] uppercase text-neutral-500 font-light">
+                Un poemario de amor
+              </p>
+
+              <h1 class="text-4xl sm:text-5xl font-light text-neutral-800 leading-tight">
+                Versos
+                <br />
+                <span class="text-rose-600 italic">Para Ti</span>
+              </h1>
+
+              <div class="w-32 h-0.5 animate-shimmer"></div>
+
+              <p class="text-lg text-neutral-500 italic">
+                "Para mi amada, con todo mi corazón"
+              </p>
+            </div>
+
+            <!-- Bottom section -->
+            <div class="flex flex-col items-center gap-4">
+              <div class="flex items-center gap-2 text-neutral-600 group-hover:text-rose-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <span class="text-sm tracking-wide">Toca para abrir</span>
+              </div>
+
+              <div class="ornament w-32 h-4 opacity-50"></div>
+            </div>
+
+            <!-- Corner decorations -->
+            <div class="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-rose-300/50 rounded-tl-sm"></div>
+            <div class="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-rose-300/50 rounded-tr-sm"></div>
+            <div class="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-rose-300/50 rounded-bl-sm"></div>
+            <div class="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-rose-300/50 rounded-br-sm"></div>
+          </div>
+
+          <!-- Back side of cover (inside) -->
+          <div class="cover-back bg-gradient-to-bl from-neutral-100 via-white to-stone-50 border-2 border-neutral-200 p-8 sm:p-12 flex flex-col items-center justify-center">
+            
+            <!-- Decorative pattern -->
+            <div class="absolute inset-6 border border-rose-200/30 rounded-lg"></div>
+            <div class="absolute inset-10 border border-rose-200/20 rounded-lg"></div>
+
+            <!-- Content -->
+            <div class="text-center space-y-6 z-10">
+              <svg class="w-10 h-10 text-rose-400/50 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+              </svg>
+              
+              <div class="space-y-2">
+                <p class="text-sm tracking-[0.2em] uppercase text-neutral-500">
+                  Escrito con amor
+                </p>
+                <h2 class="text-3xl sm:text-4xl font-light text-neutral-800">
+                  De Marcos
+                </h2>
+              </div>
+
+              <div class="w-24 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto"></div>
+
+              <p class="text-base text-neutral-500 italic max-w-[200px]">
+                Para el amor de mi vida
+              </p>
+
+              <svg class="w-5 h-5 text-rose-400/50 mx-auto mt-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+
+            <!-- Corner hearts -->
+            <svg class="absolute top-6 left-6 w-4 h-4 text-rose-400/20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <svg class="absolute top-6 right-6 w-4 h-4 text-rose-400/20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <svg class="absolute bottom-6 left-6 w-4 h-4 text-rose-400/20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <svg class="absolute bottom-6 right-6 w-4 h-4 text-rose-400/20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard link -->
+      <div class="mt-8 text-center">
+        <a href="/dashboard" class="text-xs text-neutral-400 hover:text-neutral-600 transition-colors">
+          Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(212, 163, 115, 0.5), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* 3D Book styles */
+  .book-container {
+    perspective: 2000px;
+    transform-style: preserve-3d;
+  }
+
+  .book-cover {
+    transform-style: preserve-3d;
+    transform-origin: left center;
+    transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    position: relative;
+  }
+
+  .book-cover.opening {
+    transform: rotateY(-160deg);
+  }
+
+  .book-cover:hover:not(.opening) {
+    transform: translateY(-8px) translateZ(20px);
+  }
+
+  /* Zoom cinematográfico */
+  .book-container.zooming {
+    animation: cinematicZoom 1.2s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+  }
+
+  @keyframes cinematicZoom {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(2.5);
+    }
+  }
+
+  /* Fade out del fondo */
+  .page-wrapper.zooming {
+    animation: fadeToBlack 1.2s ease-out forwards;
+  }
+
+  @keyframes fadeToBlack {
+    0% {
+      filter: brightness(1);
+    }
+    100% {
+      filter: brightness(0.3);
+    }
+  }
+
+  .cover-front, .cover-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+  }
+
+  .cover-back {
+    transform: rotateY(180deg);
+  }
+
+  .book-shadow {
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      inset -2px 0 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .book-shadow:hover {
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      inset -2px 0 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .book-spine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 16px;
+    background: linear-gradient(to right, rgba(120, 53, 15, 0.3), transparent);
+    border-radius: 8px 0 0 8px;
+  }
+
+  .pages-visible {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out 0.4s;
+  }
+
+  .book-cover.opening ~ .pages-visible {
+    opacity: 1;
+  }
+
+  /* Ornament decoration */
+  .ornament {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(160, 82, 45, 0.3) 2px,
+      rgba(160, 82, 45, 0.3) 4px
+    );
+  }
+
+  /* Background decorations */
+  .bg-blob {
+    filter: blur(80px);
+    opacity: 0.3;
+  }
+</style>
+
+<script>
+  const bookContainer = document.getElementById('bookContainer');
+  const bookCover = document.getElementById('bookCover');
+  const bookShadow = document.getElementById('bookShadow');
+  const pageWrapper = document.getElementById('pageWrapper');
+  let isOpening = false;
+
+  bookContainer?.addEventListener('click', function() {
+    if (isOpening) return;
+    
+    isOpening = true;
+    
+    // Primero abrir el libro
+    bookCover?.classList.add('opening');
+    
+    if (bookShadow) {
+      bookShadow.style.transform = 'translateX(4px) translateY(4px)';
+      bookShadow.style.filter = 'blur(16px)';
+    }
+    
+    // Después de que se abre, hacer el zoom cinematográfico
+    setTimeout(() => {
+      bookContainer?.classList.add('zooming');
+      pageWrapper?.classList.add('zooming');
+    }, 800);
+    
+    // Redirect after animation completes
+    setTimeout(() => {
+      window.location.href = '/poemas';
+    }, 2000);
+  });
+</script>

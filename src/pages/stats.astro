@@ -1,0 +1,172 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getPoemas, supabase } from '../lib/supabase';
+
+const poemas = await getPoemas();
+
+// Obtener todos los likes
+const { data: likes } = await supabase
+  .from('likes')
+  .select('*');
+
+// Estadísticas por categoría
+const categoryCounts = poemas.reduce((acc, poema) => {
+  acc[poema.category] = (acc[poema.category] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+// Estadísticas por tema
+const themeCounts = poemas.reduce((acc, poema) => {
+  acc[poema.theme] = (acc[poema.theme] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+// Poemas con más likes
+const likesPerPoema = likes?.reduce((acc, like) => {
+  acc[like.poema_id] = (acc[like.poema_id] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>) || {};
+
+const totalLikes = likes?.length || 0;
+const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0;
+---
+
+<Layout title="Estadísticas">
+  <div class="min-h-screen bg-neutral-50 py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <div class="mb-8">
+        <a 
+          href="/dashboard" 
+          class="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors mb-4"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          <span class="font-sans text-sm">Dashboard</span>
+        </a>
+        
+        <h1 class="text-4xl font-light text-neutral-800 mb-2">Estadísticas Detalladas</h1>
+        <p class="text-neutral-500">Análisis completo de tu poemario</p>
+      </div>
+      
+      <!-- Grid de estadísticas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <!-- Total de poemas -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-6">
+          <h3 class="text-sm font-medium text-neutral-600 font-sans mb-2">Total Poemas</h3>
+          <p class="text-4xl font-light text-neutral-800">{poemas.length}</p>
+        </div>
+        
+        <!-- Total de likes -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-6">
+          <h3 class="text-sm font-medium text-neutral-600 font-sans mb-2">Total Likes</h3>
+          <p class="text-4xl font-light text-rose-600">{totalLikes}</p>
+        </div>
+        
+        <!-- Promedio de likes -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-6">
+          <h3 class="text-sm font-medium text-neutral-600 font-sans mb-2">Promedio Likes</h3>
+          <p class="text-4xl font-light text-neutral-800">{avgLikes}</p>
+        </div>
+        
+        <!-- Tasa de like -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-6">
+          <h3 class="text-sm font-medium text-neutral-600 font-sans mb-2">Tasa de Like</h3>
+          <p class="text-4xl font-light text-neutral-800">
+            {poemas.length > 0 ? Math.round((totalLikes / poemas.length) * 100) : 0}%
+          </p>
+        </div>
+      </div>
+      
+      <!-- Estadísticas por categoría -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+        <!-- Por categoría -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-8">
+          <h2 class="text-2xl font-light text-neutral-800 mb-6">Por Categoría</h2>
+          <div class="space-y-4">
+            {Object.entries(categoryCounts).map(([category, count]) => (
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="capitalize text-neutral-700">{category}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-32 bg-neutral-100 rounded-full h-2 overflow-hidden">
+                    <div 
+                      class="bg-rose-500 h-full rounded-full" 
+                      style={`width: ${(count / poemas.length) * 100}%`}
+                    ></div>
+                  </div>
+                  <span class="text-sm text-neutral-600 font-sans w-8 text-right">{count}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <!-- Por tema -->
+        <div class="bg-white border border-neutral-200 rounded-xl p-8">
+          <h2 class="text-2xl font-light text-neutral-800 mb-6">Por Tema Visual</h2>
+          <div class="space-y-4">
+            {Object.entries(themeCounts).map(([theme, count]) => {
+              const colors: Record<string, string> = {
+                'romántico': 'bg-rose-500',
+                'cottage-core': 'bg-emerald-500',
+                'sereno': 'bg-sky-500',
+                'nostálgico': 'bg-amber-500',
+              };
+              return (
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="capitalize text-neutral-700">{theme}</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-32 bg-neutral-100 rounded-full h-2 overflow-hidden">
+                      <div 
+                        class={`${colors[theme] || 'bg-neutral-500'} h-full rounded-full`}
+                        style={`width: ${(count / poemas.length) * 100}%`}
+                      ></div>
+                    </div>
+                    <span class="text-sm text-neutral-600 font-sans w-8 text-right">{count}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Timeline de publicaciones -->
+      <div class="bg-white border border-neutral-200 rounded-xl p-8">
+        <h2 class="text-2xl font-light text-neutral-800 mb-6">Timeline de Publicaciones</h2>
+        <div class="space-y-3">
+          {poemas.slice(0, 10).map((poema) => {
+            const hasLike = Object.keys(likesPerPoema).includes(poema.id);
+            return (
+              <div class="flex items-center gap-4 p-3 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
+                <time class="text-sm text-neutral-500 font-sans min-w-[120px]">
+                  {new Date(poema.published_date).toLocaleDateString('es-ES', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </time>
+                <a href={`/poemas/${poema.slug}`} class="flex-1 hover:text-rose-600 transition-colors">
+                  {poema.title}
+                </a>
+                <span class="text-xs text-neutral-400 capitalize px-2 py-1 bg-neutral-100 rounded">
+                  {poema.category}
+                </span>
+                {hasLike && (
+                  <svg class="w-5 h-5 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

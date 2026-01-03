@@ -1,0 +1,117 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPoemas } from '../../lib/supabase';
+
+const poemas = await getPoemas();
+
+// Iconos por categoría
+const categoryIcons: Record<string, string> = {
+  'romántico': '🌹',
+  'cottage-core': '🌿',
+  'sereno': '🌊',
+  'nostálgico': '🍂',
+  'esperanza': '✨',
+};
+---
+
+<Layout title="Índice de Poemas">
+  <div class="min-h-screen bg-neutral-50 py-16 px-4">
+    <!-- Header con botón de regreso -->
+    <div class="max-w-4xl mx-auto mb-12">
+      <a 
+        href="/" 
+        class="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors mb-8 group"
+      >
+        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        <span class="font-sans text-sm">Portada</span>
+      </a>
+      
+      <!-- Título de la página -->
+      <div class="text-center">
+        <svg class="w-12 h-12 mx-auto mb-4 text-rose-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h1 class="text-4xl md:text-5xl font-light text-neutral-800 mb-3">
+          Índice de Poemas
+        </h1>
+        <p class="text-neutral-500 italic">
+          Elige un poema para leer
+        </p>
+        <div class="w-24 h-px bg-neutral-300 mx-auto mt-6"></div>
+      </div>
+    </div>
+    
+    <!-- Lista de poemas -->
+    <div class="max-w-4xl mx-auto space-y-4">
+      {poemas.length === 0 ? (
+        <div class="text-center py-16">
+          <p class="text-neutral-400 italic">Aún no hay poemas publicados</p>
+          <p class="text-neutral-400 text-sm mt-2">Pronto habrá versos para ti...</p>
+        </div>
+      ) : (
+        poemas.map((poema) => (
+          <a 
+            href={`/poemas/${poema.slug}`}
+            class="block group"
+          >
+            <div class="bg-white border border-neutral-200 rounded-lg p-6 hover:shadow-lg hover:border-rose-300 transition-all duration-300">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  {/* Categoría */}
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-lg">{categoryIcons[poema.category] || '📝'}</span>
+                    <span class="text-xs uppercase tracking-wider text-neutral-500 font-sans">
+                      {poema.category}
+                    </span>
+                  </div>
+                  
+                  {/* Título */}
+                  <h2 class="text-2xl font-light text-neutral-800 group-hover:text-rose-600 transition-colors mb-2">
+                    {poema.title}
+                  </h2>
+                  
+                  {/* Subtítulo */}
+                  {poema.subtitle && (
+                    <p class="text-neutral-500 italic text-sm mb-3">
+                      {poema.subtitle}
+                    </p>
+                  )}
+                  
+                  {/* Preview del contenido */}
+                  <p class="text-neutral-600 text-sm line-clamp-2">
+                    {poema.content.split('\n')[0]}...
+                  </p>
+                </div>
+                
+                {/* Flecha */}
+                <div class="flex-shrink-0">
+                  <svg 
+                    class="w-6 h-6 text-neutral-300 group-hover:text-rose-600 group-hover:translate-x-1 transition-all" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
+              
+              {/* Fecha */}
+              <div class="mt-4 pt-4 border-t border-neutral-100">
+                <time class="text-xs text-neutral-400 font-sans">
+                  {new Date(poema.published_date).toLocaleDateString('es-ES', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </time>
+              </div>
+            </div>
+          </a>
+        ))
+      )}
+    </div>
+  </div>
+</Layout>

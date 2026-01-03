@@ -1,0 +1,47 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import { getPoemaBySlug, getLikeForPoema } from '../../lib/supabase';
+import RomanticoTheme from '../../components/themes/RomanticoTheme.astro';
+import CottageCoreTheme from '../../components/themes/CottageCoreTheme.astro';
+import SerenoTheme from '../../components/themes/SerenoTheme.astro';
+import NostalgicoTheme from '../../components/themes/NostalgicoTheme.astro';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/poemas');
+}
+
+const poema = await getPoemaBySlug(slug);
+
+if (!poema) {
+  return Astro.redirect('/poemas');
+}
+
+const like = await getLikeForPoema(poema.id);
+const hasLike = !!like;
+
+// Seleccionar el tema correcto
+const themes: Record<string, any> = {
+  'romántico': RomanticoTheme,
+  'cottage-core': CottageCoreTheme,
+  'sereno': SerenoTheme,
+  'nostálgico': NostalgicoTheme,
+};
+
+const ThemeComponent = themes[poema.theme] || RomanticoTheme;
+---
+
+<Layout title={poema.title} description={poema.subtitle}>
+  <ThemeComponent 
+    title={poema.title}
+    subtitle={poema.subtitle}
+    content={poema.content}
+    poemaId={poema.id}
+    hasLike={hasLike}
+    category={poema.category}
+    publishedDate={poema.published_date}
+  />
+</Layout>
