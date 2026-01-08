@@ -1,4 +1,7 @@
 ---
+// src/components/themes/RomanticoTheme.astro
+import CommentsSection from '../CommentsSection.astro';
+
 interface Props {
   title: string;
   subtitle?: string;
@@ -7,9 +10,14 @@ interface Props {
   hasLike: boolean;
   category: string;
   publishedDate: string;
+  comments: Array<{
+    id: string;
+    content: string;
+    created_at: string;
+  }>;
 }
 
-const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = Astro.props;
+const { title, subtitle, content, poemaId, hasLike, category, publishedDate, comments } = Astro.props;
 ---
 
 <div class="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 py-16 px-4">
@@ -99,6 +107,13 @@ const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = 
           })}
         </time>
       </div>
+
+      <!-- Sección de Comentarios -->
+      <CommentsSection 
+        poemaId={poemaId}
+        comments={comments}
+        themeColor="rose"
+      />
     </div>
   </div>
 </div>
@@ -117,7 +132,6 @@ const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = 
       
       try {
         if (hasLike) {
-          // Quitar like
           await supabase
             .from('likes')
             .delete()
@@ -129,7 +143,6 @@ const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = 
           icon.setAttribute('fill', 'none');
           text.textContent = '¿Te gustó este poema?';
         } else {
-          // Agregar like
           await supabase
             .from('likes')
             .insert({ poema_id: poemaId });
@@ -140,7 +153,6 @@ const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = 
           icon.setAttribute('fill', 'currentColor');
           text.textContent = 'Te gustó este poema';
           
-          // Animación
           icon.classList.add('animate-ping');
           setTimeout(() => icon.classList.remove('animate-ping'), 600);
         }

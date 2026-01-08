@@ -1,8 +1,9 @@
 ---
+// src/pages/poemas/[slug].astro
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
-import { getPoemaBySlug, getLikeForPoema } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import RomanticoTheme from '../../components/themes/RomanticoTheme.astro';
 import CottageCoreTheme from '../../components/themes/CottageCoreTheme.astro';
 import SerenoTheme from '../../components/themes/SerenoTheme.astro';
@@ -14,14 +15,32 @@ if (!slug) {
   return Astro.redirect('/poemas');
 }
 
-const poema = await getPoemaBySlug(slug);
+// Obtener el poema
+const { data: poema, error: poemaError } = await supabase
+  .from('poemas')
+  .select('*')
+  .eq('slug', slug)
+  .single();
 
-if (!poema) {
+if (poemaError || !poema) {
   return Astro.redirect('/poemas');
 }
 
-const like = await getLikeForPoema(poema.id);
+// Obtener like
+const { data: like } = await supabase
+  .from('likes')
+  .select('*')
+  .eq('poema_id', poema.id)
+  .maybeSingle();
+
 const hasLike = !!like;
+
+// Obtener comentarios
+const { data: comments } = await supabase
+  .from('comments')
+  .select('*')
+  .eq('poema_id', poema.id)
+  .order('created_at', { ascending: false });
 
 // Seleccionar el tema correcto
 const themes: Record<string, any> = {
@@ -43,5 +62,6 @@ const ThemeComponent = themes[poema.theme] || RomanticoTheme;
     hasLike={hasLike}
     category={poema.category}
     publishedDate={poema.published_date}
+    comments={comments || []}
   />
 </Layout>

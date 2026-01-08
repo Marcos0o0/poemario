@@ -7,9 +7,16 @@ interface Props {
   hasLike: boolean;
   category: string;
   publishedDate: string;
+  comments: Array<{
+    id: string;
+    content: string;
+    created_at: string;
+  }>;
 }
 
-const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = Astro.props;
+const { title, subtitle, content, poemaId, hasLike, category, publishedDate, comments} = Astro.props;
+
+import CommentsSection from '../CommentsSection.astro';
 ---
 
 <div class="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50 py-16 px-4">
@@ -110,8 +117,15 @@ const { title, subtitle, content, poemaId, hasLike, category, publishedDate } = 
           })}
         </time>
       </div>
+      <!-- Sección de Comentarios -->
+      <CommentsSection 
+        poemaId={poemaId}
+        comments={comments}
+        themeColor="emerald"  // Cambia según el tema: emerald, sky, o amber
+      />
     </div>
   </div>
+  
 </div>
 
 <script>
