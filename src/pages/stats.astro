@@ -1,4 +1,5 @@
 ---
+// src/pages/stats.astro
 export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
@@ -31,6 +32,14 @@ const likesPerPoema = likes?.reduce((acc, like) => {
 
 const totalLikes = likes?.length || 0;
 const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0;
+
+// Colores por tema
+const themeColors: Record<string, string> = {
+  'romántico': 'bg-rose-500',
+  'cottage-core': 'bg-emerald-500',
+  'sereno': 'bg-sky-500',
+  'nostálgico': 'bg-amber-500',
+};
 ---
 
 <Layout title="Estadísticas">
@@ -48,7 +57,7 @@ const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0
           <span class="font-sans text-sm">Dashboard</span>
         </a>
         
-        <h1 class="text-4xl font-light text-neutral-800 mb-2">Estadísticas Detalladas</h1>
+        <h1 class="text-4xl font-light text-neutral-800 mb-2">Estadisticas Detalladas</h1>
         <p class="text-neutral-500">Análisis completo de tu poemario</p>
       </div>
       
@@ -87,22 +96,25 @@ const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0
         <div class="bg-white border border-neutral-200 rounded-xl p-8">
           <h2 class="text-2xl font-light text-neutral-800 mb-6">Por Categoría</h2>
           <div class="space-y-4">
-            {Object.entries(categoryCounts).map(([category, count]) => (
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="capitalize text-neutral-700">{category}</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="w-32 bg-neutral-100 rounded-full h-2 overflow-hidden">
-                    <div 
-                      class="bg-rose-500 h-full rounded-full" 
-                      style={`width: ${(count / poemas.length) * 100}%`}
-                    ></div>
+            {Object.entries(categoryCounts).map(([category, count]) => {
+              const percentage = (count / poemas.length) * 100;
+              return (
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="capitalize text-neutral-700">{category}</span>
                   </div>
-                  <span class="text-sm text-neutral-600 font-sans w-8 text-right">{count}</span>
+                  <div class="flex items-center gap-3">
+                    <div class="w-32 bg-neutral-100 rounded-full h-2 overflow-hidden">
+                      <div 
+                        class="bg-rose-500 h-full rounded-full" 
+                        style={`width: ${percentage}%`}
+                      ></div>
+                    </div>
+                    <span class="text-sm text-neutral-600 font-sans w-8 text-right">{count}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         
@@ -111,12 +123,8 @@ const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0
           <h2 class="text-2xl font-light text-neutral-800 mb-6">Por Tema Visual</h2>
           <div class="space-y-4">
             {Object.entries(themeCounts).map(([theme, count]) => {
-              const colors: Record<string, string> = {
-                'romántico': 'bg-rose-500',
-                'cottage-core': 'bg-emerald-500',
-                'sereno': 'bg-sky-500',
-                'nostálgico': 'bg-amber-500',
-              };
+              const percentage = (count / poemas.length) * 100;
+              const colorClass = themeColors[theme] || 'bg-neutral-500';
               return (
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
@@ -125,8 +133,8 @@ const avgLikes = poemas.length > 0 ? (totalLikes / poemas.length).toFixed(2) : 0
                   <div class="flex items-center gap-3">
                     <div class="w-32 bg-neutral-100 rounded-full h-2 overflow-hidden">
                       <div 
-                        class={`${colors[theme] || 'bg-neutral-500'} h-full rounded-full`}
-                        style={`width: ${(count / poemas.length) * 100}%`}
+                        class={colorClass + ' h-full rounded-full'}
+                        style={`width: ${percentage}%`}
                       ></div>
                     </div>
                     <span class="text-sm text-neutral-600 font-sans w-8 text-right">{count}</span>
